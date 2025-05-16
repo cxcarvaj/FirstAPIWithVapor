@@ -38,6 +38,8 @@ struct CoursesMigration: AsyncMigration {
             .field(.id, .int, .identifier(auto: true))
             .field("name", .string, .required)
             .field("type", type, .required)
+            .field("created_at", .datetime)
+            .field("updated_at", .datetime)
             .create()
     }
     

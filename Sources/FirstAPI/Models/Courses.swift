@@ -15,7 +15,7 @@ enum CourseType: String, Codable {
     case sap = "Swift Accessibilty Program"
 }
 
-final class Courses: Model, @unchecked Sendable {
+final class Courses: Model, Content, @unchecked Sendable {
     static let schema = "courses"
     
     @ID(custom: .id) var id: Int?
@@ -25,7 +25,7 @@ final class Courses: Model, @unchecked Sendable {
     @Timestamp(key: "created_at", on: .create) var createdAt: Date?
     @Timestamp(key: "updated_at", on: .update) var updatedAt: Date?
     
-    @Children(for: \.$course) var person: [Person]
+    @Children(for: \.$course) var people: [Person]
     
     init() { }
     

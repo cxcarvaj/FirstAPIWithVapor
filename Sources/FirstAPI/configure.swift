@@ -11,6 +11,8 @@ public func configure(_ app: Application) async throws {
     app.migrations.add(PersonMigration())
     app.migrations.add(CoursesMigration())
     app.migrations.add(PersonCoursesMigration())
+    app.migrations.add(ProjectsMigration())
+    app.migrations.add(ProjectsPersonaMigration())
     app.views.use(.leaf)
 
     // register routes

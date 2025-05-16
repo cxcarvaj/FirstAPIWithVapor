@@ -1,5 +1,5 @@
 //
-//  PeopleController.swift
+//  PersonController.swift
 //  FirstAPI
 //
 //  Created by Carlos Xavier Carvajal Villegas on 14/5/25.
@@ -8,11 +8,12 @@
 import Vapor
 import Fluent
 
-struct PeopleController: RouteCollection {
+struct PersonController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
-        let groupedRoutes = routes.grouped("people")
+        let groupedRoutes = routes.grouped("person")
         groupedRoutes.post("new", use: createPerson)
         groupedRoutes.get("all", use: getAll)
+        groupedRoutes.get("allPretty", use: getAllPretty)
         groupedRoutes.put("update", use: updatePerson)
         groupedRoutes.delete("delete", use: deletePerson)
     }
@@ -25,8 +26,16 @@ struct PeopleController: RouteCollection {
         return .created
     }
     
-    func getAll(_ req: Request) async throws -> [PersonDTO] {
+    func getAll(_ req: Request) async throws -> [Person] {
        try await Person.query(on: req.db)
+            .with(\.$course)
+            .all()
+//            .map(\.toDTO)
+    }
+    
+    func getAllPretty(_ req: Request) async throws -> [PersonDTO] {
+       try await Person.query(on: req.db)
+            .with(\.$course)
             .all()
             .map(\.toDTO)
     }

@@ -11,4 +11,11 @@ struct PersonDTO: Content {
     let name: String
     let email: String
     let address: String?
+    let course: CourseDTO?
+}
+
+extension Person {
+    var toDTO: PersonDTO {
+        PersonDTO(name: name, email: email, address: address, course: course?.toDTO)
+    }
 }

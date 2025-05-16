@@ -28,13 +28,16 @@ struct PersonMigration: AsyncMigration {
 struct PersonCoursesMigration: AsyncMigration {
     func prepare(on database: any Database) async throws {
         try await database.schema(Person.schema)
-            .field("course", .int, .references(Courses.schema, .id))
+            .field("course_id", .int, .references(Courses.schema, .id))
             .update()
     }
     
     func revert(on database: any Database) async throws {
+//        try await database.schema(Person.schema)
+//            .field("course", .int, .references(Courses.schema, .id))
+//            .delete() //Delete Table
         try await database.schema(Person.schema)
-            .field("course", .int, .references(Courses.schema, .id))
-            .delete()
+            .deleteField("course_id")
+            .update() //Alter Table
     }
 }

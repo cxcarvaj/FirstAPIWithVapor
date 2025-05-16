@@ -8,7 +8,7 @@
 import Vapor
 import Fluent
 
-final class Person: Model, @unchecked Sendable {
+final class Person: Model, Content, @unchecked Sendable {
     static let schema: String = "person"
     
     @ID(key: .id) var id: UUID?
@@ -20,7 +20,9 @@ final class Person: Model, @unchecked Sendable {
     //Ya que una persona, puede estar en un curso, es decir que en People vamos que tener que agregar un valor de Courses
 //    @Parent(key: "course") var course: Courses //-> Con esto puedo tener cursos sin personas, pero no personas sin cursos.
     
-    @OptionalParent(key: "course") var course: Courses? //-> Ahora puede tener cursos y personas sin tenerlas relacionadas
+    @OptionalParent(key: "course_id") var course: Courses? //-> Ahora puede tener cursos y personas sin tenerlas relacionadas
+    
+    @Siblings(through: ProjectsPerson.self, from: \.$person, to: \.$project) var projects: [Projects]
     
     init() {}
     
@@ -31,11 +33,5 @@ final class Person: Model, @unchecked Sendable {
         self.address = address
         // la relación siempre va en el valor proyectado
         self.$course.id = course
-    }
-}
-
-extension Person {
-    var toDTO: PersonDTO {
-        PersonDTO(name: name, email: email, address: address)
     }
 }
