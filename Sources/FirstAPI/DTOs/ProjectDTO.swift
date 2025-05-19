@@ -12,11 +12,12 @@ struct ProjectDTO: Content {
     let name: String
     let summary: String?
     let type: ProjectType
+    var people: [PersonDTO]?
 }
 
 
 extension Projects {
     var toDTO: ProjectDTO {
-        ProjectDTO(id: nil, name: name, summary: summary, type: type)
+        ProjectDTO(id: nil, name: name, summary: summary, type: type, people: people.count > 0 ? people.map(\.toDTO) : nil)
     }
 }

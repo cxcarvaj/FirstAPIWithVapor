@@ -18,6 +18,8 @@ struct DemoController: RouteCollection {
         demo.get("whatsup", ":name", use: whatsup)
         demo.get("client", ":id", use: client)
         demo.post("altaCliente", use: altaCliente)
+        demo.get("getWallpaper", use: getWallpaper)
+
     }
     
     func hello(req: Request) throws -> String {
@@ -58,6 +60,25 @@ struct DemoController: RouteCollection {
     func altaCliente(req: Request) throws -> String {
         let content = try req.content.decode(ClienteAlta.self)
         return "Alta de cliente con ID: \(content.id) y nombre: \(content.name)"
+    }
+    
+    func getWallpaper(req: Request) async throws -> Response {
+        guard let wallpaperNum = req.query[Int.self, at: "id"] else {
+            throw Abort(.badRequest, reason: "There is no id in the params")
+        }
+        //URI se usa para rutas del disco, no para URL's
+//        let uri = URI(string: req.application.directory.workingDirectory + "Images/vapor\(wallpaperNum.formatted(.number.precision(.integerLength(2)))).png")
+        let basePath = req.application.directory.workingDirectory
+        let fileName = "vapor\(wallpaperNum.formatted(.number.precision(.integerLength(2)))).png"
+        let url = URL(fileURLWithPath: basePath)
+            .appendingPathComponent("Images")
+            .appendingPathComponent(fileName)
+        
+        if FileManager.default.fileExists(atPath: url.path) {
+            return try await req.fileio.asyncStreamFile(at: url.path, mediaType: .png)
+        } else {
+            throw Abort(.notFound, reason: "There is no wallpaper with id: \(wallpaperNum)")
+        }
     }
 }
 
